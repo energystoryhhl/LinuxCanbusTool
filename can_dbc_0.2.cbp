@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="dbc_load_0.1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/dbc_load_0" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="./dbc Tx2TryDBC.dbc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-lpthread" />
+					<Add library="/usr/lib/aarch64-linux-gnu/libpthread.a" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/dbc_load_0" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="BO.h" />
+		<Unit filename="BO_Index.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="BO_Index.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="Tx2TryDBC_define.h" />
+		<Unit filename="canbus.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="canbus.h" />
+		<Unit filename="dbc_timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="dbc_timer.h" />
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main.h" />
+		<Unit filename="menu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="menu.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="package.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="package.h" />
+		<Unit filename="pharse.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="pharse.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
