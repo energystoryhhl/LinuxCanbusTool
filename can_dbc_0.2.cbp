@@ -17,6 +17,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-lpthread" />
+					<Add option="-lmysqlclient" />
 					<Add library="/usr/lib/aarch64-linux-gnu/libpthread.a" />
 				</Linker>
 			</Target>
@@ -43,6 +44,14 @@
 		<Unit filename="BO_Index.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="GetTime.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="GetTime.h" />
+		<Unit filename="MySql.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="MySql.h" />
 		<Unit filename="Tx2TryDBC_define.h" />
 		<Unit filename="canbus.c">
 			<Option compilerVar="CC" />

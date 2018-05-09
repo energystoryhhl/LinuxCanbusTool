@@ -90,7 +90,7 @@
 
 1523178735 /home/nvidia/dbc_load_0.2/BO_Index.h
 
-1525310472 source:/home/nvidia/dbc_load_0.2/canbus.c
+1525314743 source:/home/nvidia/dbc_load_0.2/canbus.c
 	"main.h"
 	"canbus.h"
 	"BO.h"
@@ -147,14 +147,18 @@
 
 1523410226 /home/nvidia/dbc_load_0.2/menu.h
 
-1525313961 source:/home/nvidia/dbc_load_0.2/MySql.c
+1525760237 source:/home/nvidia/dbc_load_0.2/MySql.c
 	"MySql.h"
 	"GetTime.h"
 	"canbus.h"
 	"pharse.h"
 	"sys/time.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<pthread.h>
 
-1525312957 /home/nvidia/dbc_load_0.2/MySql.h
+1525316186 /home/nvidia/dbc_load_0.2/MySql.h
 	<mysql/mysql.h>
 	<string.h>
 	<stdio.h>
@@ -164,10 +168,10 @@
 1524449581 source:/home/nvidia/dbc_load_0.2/package.c
 	"package.h"
 
-1524449869 source:/home/nvidia/dbc_load_0.2/pharse.c
+1525310432 source:/home/nvidia/dbc_load_0.2/pharse.c
 	"pharse.h"
 
-1525310504 source:/home/nvidia/dbc_load_0.2/main.c
+1525314925 source:/home/nvidia/dbc_load_0.2/main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

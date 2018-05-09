@@ -16,6 +16,7 @@
 #include "Tx2TryDBC_define.h"
 #include "dbc_timer.h"
 #include "MySql.h"
+#include "PyCall.h"
 
 
 FILE * dbc_cfg_fd = NULL;       //dbc file fd
@@ -48,8 +49,8 @@ void PrintTask(void)
                         while(BO_List[i]->SG_List[t] != NULL) /*SG_LOOP*/
                         {
                             printf("%s",BO_List[i]->SG_List[t]->signal_name);
-                            printf(">>>%-15lf",BO_List[i]->SG_List[t]->value);
-                            printf("send>%-15lf\t",BO_List[i]->SG_List[t]->value_send);
+                            printf(">>>%-10lf",BO_List[i]->SG_List[t]->value);
+                            printf("send>%-10lf\t",BO_List[i]->SG_List[t]->value_send);
                             if((t+1)%2 == 0)
                             {
                                 printf("\n");
@@ -115,7 +116,7 @@ int main(int argc,char *argv[])
 
 
     /*choose打印菜单*/
-    printf("1:Canbus MySql\n2:Fork\n  -->can0;can1-->\n  <--can0;can1<--\n3:-->can0;can1-->\n  <--can0;can1<--\n");
+    printf("1:Canbus MySql\n2:Fork\n  -->can0;can1-->\n  <--can0;can1<--\n3:-->can0;can1-->\n  <--can0;can1<--\n4:csv pycall\n");
     //int nbytes;
     int choice;
     scanf("%d",&choice);
@@ -123,7 +124,7 @@ int main(int argc,char *argv[])
     canbuscmd_t cmd;
     cmd.interface = "can0";
     cmd.record = 1;
-    cmd.show = 1;
+    cmd.show = 0;
     cmd.loopback = 0;
     switch(choice)
     {
@@ -138,6 +139,12 @@ int main(int argc,char *argv[])
 
         case 3:
                 CanBusTestMode();//10ms 20ms 50ms 100ms程序测试
+            break;
+        case 4:
+            CanbusRecvRecord(&cmd);
+            StartPyCall();
+            RecordDataCsv();
+
             break;
 
     }

@@ -51,6 +51,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="MySql.h" />
+		<Unit filename="PyCall.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="PyCall.h" />
 		<Unit filename="canbus.c">
 			<Option compilerVar="CC" />
 		</Unit>

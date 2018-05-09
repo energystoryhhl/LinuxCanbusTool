@@ -13,6 +13,9 @@
 #include <string.h>
 #include <pthread.h>
 
+#define STEPTIME 100 //ms
+#define DATATRIGSIZE 5000 //
+
 long long sqlCounter = 1;
 const char *g_host_name = "localhost";
 const char *g_user_name = "root";
@@ -196,7 +199,7 @@ void RecordData(FILE ** f)
             i++;
         }
         fwrite("\n",1,1,*f);
-        usleep(10*1000);
+        usleep(STEPTIME*1000);
 }
 
 void * CsvThread(void *arg)
@@ -220,23 +223,20 @@ void * CsvThread(void *arg)
             i++;
         }
         fwrite("\n",1,1,recordFile);
-        usleep(10*1000);
+        //usleep(STEPTIME*1000);
     }
-
-
 }
-
-
 
 void RecordDataCsv()
 {
+    long counter = 0;
     char csvName[30]; //date is the TableName!!!
     GetTime(&timeSaved, timeDate, csvName);
-    sprintf(csvName, "%s.csv", csvName);
-
+    strcat(csvName,".csv");
+    //sprintf(csvName, "%s.csv", csvName);
     CreateCsv(&recordFile,csvName);
-    //pthread_t recordThread;
-    //pthread_create(&recordThread,NULL,RecordData,&recordFile);
+//    pthread_t recordThread;
+//    pthread_create(&recordThread,NULL,RecordData,&recordFile);
 
 
 //    csvTask_t csvarg;
@@ -248,9 +248,19 @@ void RecordDataCsv()
     while(1)
     {
         RecordData(&recordFile);
-        usleep(10*1000);
+        counter ++;
+        printf("size is %ld\n",counter);+
+        if(counter > DATATRIGSIZE)
+        {
+            //printf("size is triged!\n");
+            counter = 0;
+            fclose(recordFile);
+            CreateCsv(&recordFile,csvName);
+            //printf("OK!");
+            sleep(10);
+        }
     }
-    fclose(recordFile);
+
 }
 
 
