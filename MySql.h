@@ -27,6 +27,12 @@ typedef struct csvTask
     FILE ** fptr;
 }csvTask_t;
 
+typedef struct csvFileList
+{
+    char fileNameList[10][50];
+    unsigned short counter;
+}csvFileList_t;
+
 void print_mysql_error(const char *msg);
 
 int executesql(const char *sql);

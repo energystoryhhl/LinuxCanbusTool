@@ -116,7 +116,7 @@ int main(int argc,char *argv[])
 
 
     /*choose打印菜单*/
-    printf("1:Canbus MySql\n2:Fork\n  -->can0;can1-->\n  <--can0;can1<--\n3:-->can0;can1-->\n  <--can0;can1<--\n4:csv pycall\n");
+    printf("1:Canbus MySql\n2:Fork\n  -->can0;can1-->\n  <--can0;can1<--\n3:-->can0;can1-->\n  <--can0;can1<--\n4:csv pycall\n5:for test\n");
     //int nbytes;
     int choice;
     scanf("%d",&choice);
@@ -141,10 +141,17 @@ int main(int argc,char *argv[])
                 CanBusTestMode();//10ms 20ms 50ms 100ms程序测试
             break;
         case 4:
+            PyInit();
             CanbusRecvRecord(&cmd);
-            StartPyCall();
             RecordDataCsv();
+            break;
+        case 5:
+            PyInit();
+            PyCallfun("test01", "testprint", "test arg!");
 
+            break;
+        default:
+            printf("Invaild parameter\n");
             break;
 
     }

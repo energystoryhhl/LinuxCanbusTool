@@ -4,6 +4,7 @@
 *function: through MySql record the canbus Data
 ***********************************************************/
 #include "MySql.h"
+#include "PyCall.h"
 #include "GetTime.h"
 #include "canbus.h"
 #include "pharse.h"
@@ -13,8 +14,12 @@
 #include <string.h>
 #include <pthread.h>
 
+
 #define STEPTIME 100 //ms
-#define DATATRIGSIZE 5000 //
+
+#define CSV_NAME_SIZE 50
+#define MAX_FILE_NUMBER 3
+#define DATATRIGSIZE 200 //
 
 long long sqlCounter = 1;
 const char *g_host_name = "localhost";
@@ -121,8 +126,8 @@ extern void PrintTask(void);
 /*mysql record test program*/
 void CanbusMySqlTest()
 {
-        pthread_t showThread;
-        pthread_create(&showThread, NULL, (void *)PrintTask, NULL);   //创建打印线程
+    pthread_t showThread;
+    pthread_create(&showThread, NULL, (void *)PrintTask, NULL);   //创建打印线程
     char date[30]; //date is the TableName!!!
     char sql[MAX_BUF_SIZE];
     mySqlTask_t task;
@@ -178,13 +183,14 @@ void CreateCsv(FILE ** f,char *fname)
         j = 0;
         i++;
     }
+    fwrite("\n",1,1,*f);
 }
 //void RecordData(FILE ** f)
 void RecordData(FILE ** f)
 {
     //printf("record thread starting!\n");
     int i = 0, j = 0;
-    //Create csv list tittle
+        //Create csv list tittle
         while(BO_List[i])
         {
             //printf(">>>%s\n",taskArg->boList[i]->message_name);
@@ -204,8 +210,9 @@ void RecordData(FILE ** f)
 
 void * CsvThread(void *arg)
 {
-    //csvTask_t* argIn = (csvTask_t*)arg;
-   // argIn->fptr
+    csvTask_t* argIn = (csvTask_t*)arg;
+
+    FILE ** f = argIn->fptr;
     int i = 0, j = 0;
     while(1)
     {
@@ -214,49 +221,124 @@ void * CsvThread(void *arg)
             //printf(">>>%s\n",taskArg->boList[i]->message_name);
             while(BO_List[i]->SG_List[j])
             {
-                fprintf(recordFile,"%f",BO_List[i]->SG_List[j]->value);
+                int a;
+                a = fprintf(*f,"%f",BO_List[i]->SG_List[j]->value);
+                printf("write :%d\n",a);
                 //fwrite(",",1,1,recordFile);
-                fprintf(recordFile,",");
+                fprintf(*f,",");
                 j++;
             }
             j = 0;
             i++;
         }
-        fwrite("\n",1,1,recordFile);
-        //usleep(STEPTIME*1000);
+        fwrite("\n",1,1,*f);
+        usleep(STEPTIME*1000);
     }
 }
+
+int AddCsvFile(csvFileList_t* list,char* fileName)
+{
+    if(list->counter < MAX_FILE_NUMBER)
+    {
+        strcpy(list->fileNameList[list->counter],fileName);
+        list->counter++;
+    }
+    if(list->counter == MAX_FILE_NUMBER)
+    {
+        if(-1 == remove(list->fileNameList[0]))
+            printf("remove file error!");
+        int i;
+        for(i = 0; i< list->counter; i++)
+        {
+            strcpy(list->fileNameList[i],list->fileNameList[i+1]);
+        }
+        strcpy(list->fileNameList[list->counter - 1],fileName);
+        list->counter--;
+    }
+    return 0;
+}
+
+
 
 void RecordDataCsv()
 {
     long counter = 0;
-    char csvName[30]; //date is the TableName!!!
+    unsigned short csvFileCounter = 0;
+    char csvName[CSV_NAME_SIZE]; //date is the TableName!!!
+    csvFileList_t csvList;
+    memset(&csvList, 0, sizeof(csvList));
+    pthread_t pytask;
+    pyCallTask_t pyTask;
     GetTime(&timeSaved, timeDate, csvName);
     strcat(csvName,".csv");
     //sprintf(csvName, "%s.csv", csvName);
-    CreateCsv(&recordFile,csvName);
+    if(0 == access(csvName,0))
+    {
+        strtok(csvName,".");
+        strcat(csvName,"_new.csv");
+        CreateCsv(&recordFile,csvName);
+        AddCsvFile(&csvList,csvName);
+        csvFileCounter ++;
+    }
+    else
+    {
+        CreateCsv(&recordFile,csvName);
+        AddCsvFile(&csvList,csvName);
+        csvFileCounter++;
+    }
+
+    pyTask.fileName = (char *)malloc(50);
 //    pthread_t recordThread;
 //    pthread_create(&recordThread,NULL,RecordData,&recordFile);
-
-
 //    csvTask_t csvarg;
 //    csvarg.fptr = &recordFile;
-
+//
 //    pthread_t csvThread;
-//    pthread_create(&csvThread,NULL,CsvThread,NULL);
-
+//    pthread_create(&csvThread,NULL,CsvThread,&csvarg);
     while(1)
     {
         RecordData(&recordFile);
         counter ++;
-        printf("size is %ld\n",counter);+
-        if(counter > DATATRIGSIZE)
+
+        system("clear");
+        printf("size is %ld\n",counter);
+        fflush(stdout);
+
+        if(counter >= DATATRIGSIZE)
         {
             //printf("size is triged!\n");
             counter = 0;
-            fclose(recordFile);
-            CreateCsv(&recordFile,csvName);
-            //printf("OK!");
+            fclose(recordFile); //close file!
+            printf("call py funciotn!\n");
+            /*cal py*/
+            //pyTask.fileName = csvName;
+            strcpy(pyTask.fileName,csvName);
+            pyTask.fun = "readcsv";
+            pyTask.module = "test01";
+            pthread_create(&pytask,NULL,PyProcessThread,&pyTask);
+
+            //memset(&pyTask,0,sizeof(pyTask));
+            //PyCallfun("test01", "readcsv", csvName);
+            printf("done!\n");
+
+            /*done*/
+            memset(csvName,0,CSV_NAME_SIZE);
+            GetTime(&timeSaved, timeDate, csvName); //create new file
+            strcat(csvName,".csv");
+            if(0 == access(csvName,0))
+            {
+                strtok(csvName,".");
+                strcat(csvName,"_new.csv");
+                CreateCsv(&recordFile,csvName);
+                AddCsvFile(&csvList,csvName);
+                csvFileCounter++;
+            }
+            else
+            {
+                CreateCsv(&recordFile,csvName);
+                AddCsvFile(&csvList,csvName);
+                csvFileCounter++;
+            }
             sleep(10);
         }
     }

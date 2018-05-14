@@ -17,6 +17,7 @@
 				<Linker>
 					<Add option="-lpthread" />
 					<Add option="-lmysqlclient" />
+					<Add option="-lpython3.5m" />
 					<Add library="/usr/lib/aarch64-linux-gnu/libpthread.a" />
 				</Linker>
 			</Target>
